@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.util.Timer;
 
 import com.ning.http.client.AsyncHttpProviderConfig;
@@ -28,6 +29,11 @@ import com.ning.http.client.AsyncHttpProviderConfig;
  * This class can be used to pass Netty's internal configuration options. See Netty documentation for more information.
  */
 public class NettyAsyncHttpProviderConfig implements AsyncHttpProviderConfig<String, Object> {
+
+    public static interface AdditionalPipelineInitializer {
+
+        void initPipeline(ChannelPipeline pipeline) throws Exception;
+    }
 
     /**
      * Use Netty's blocking IO stategy.
@@ -88,6 +94,12 @@ public class NettyAsyncHttpProviderConfig implements AsyncHttpProviderConfig<Str
     private Timer nettyTimer;
     
     private long handshakeTimeoutInMillis = 10000L;
+
+    // simon: from 2.0
+    private AdditionalPipelineInitializer httpAdditionalPipelineInitializer;
+    private AdditionalPipelineInitializer wsAdditionalPipelineInitializer;
+    private AdditionalPipelineInitializer httpsAdditionalPipelineInitializer;
+    private AdditionalPipelineInitializer wssAdditionalPipelineInitializer;
 
     public NettyAsyncHttpProviderConfig() {
         properties.put(REUSE_ADDRESS, "false");
@@ -172,5 +184,37 @@ public class NettyAsyncHttpProviderConfig implements AsyncHttpProviderConfig<Str
 
     public void setHandshakeTimeoutInMillis(long handshakeTimeoutInMillis) {
         this.handshakeTimeoutInMillis = handshakeTimeoutInMillis;
+    }
+
+    public AdditionalPipelineInitializer getWssAdditionalPipelineInitializer() {
+        return wssAdditionalPipelineInitializer;
+    }
+
+    public void setWssAdditionalPipelineInitializer(AdditionalPipelineInitializer wssAdditionalPipelineInitializer) {
+        this.wssAdditionalPipelineInitializer = wssAdditionalPipelineInitializer;
+    }
+
+    public AdditionalPipelineInitializer getHttpsAdditionalPipelineInitializer() {
+        return httpsAdditionalPipelineInitializer;
+    }
+
+    public void setHttpsAdditionalPipelineInitializer(AdditionalPipelineInitializer httpsAdditionalPipelineInitializer) {
+        this.httpsAdditionalPipelineInitializer = httpsAdditionalPipelineInitializer;
+    }
+
+    public AdditionalPipelineInitializer getWsAdditionalPipelineInitializer() {
+        return wsAdditionalPipelineInitializer;
+    }
+
+    public void setWsAdditionalPipelineInitializer(AdditionalPipelineInitializer wsAdditionalPipelineInitializer) {
+        this.wsAdditionalPipelineInitializer = wsAdditionalPipelineInitializer;
+    }
+
+    public AdditionalPipelineInitializer getHttpAdditionalPipelineInitializer() {
+        return httpAdditionalPipelineInitializer;
+    }
+
+    public void setHttpAdditionalPipelineInitializer(AdditionalPipelineInitializer httpAdditionalPipelineInitializer) {
+        this.httpAdditionalPipelineInitializer = httpAdditionalPipelineInitializer;
     }
 }

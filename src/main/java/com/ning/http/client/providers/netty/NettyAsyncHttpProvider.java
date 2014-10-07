@@ -332,6 +332,10 @@ public class NettyAsyncHttpProvider extends SimpleChannelUpstreamHandler impleme
                 }
                 pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
                 pipeline.addLast(HTTP_PROCESSOR, NettyAsyncHttpProvider.this);
+
+                if (providerConfig.getHttpAdditionalPipelineInitializer() != null) {
+                    providerConfig.getHttpAdditionalPipelineInitializer().initPipeline(pipeline);
+                }
                 return pipeline;
             }
         });
@@ -353,6 +357,9 @@ public class NettyAsyncHttpProvider extends SimpleChannelUpstreamHandler impleme
                 ChannelPipeline pipeline = pipeline();
                 pipeline.addLast(HTTP_HANDLER, createHttpClientCodec());
                 pipeline.addLast(WS_PROCESSOR, NettyAsyncHttpProvider.this);
+                if (providerConfig.getWsAdditionalPipelineInitializer() != null) {
+                    providerConfig.getWsAdditionalPipelineInitializer().initPipeline(pipeline);
+                }
                 return pipeline;
             }
         });
@@ -394,6 +401,11 @@ public class NettyAsyncHttpProvider extends SimpleChannelUpstreamHandler impleme
                 }
                 pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
                 pipeline.addLast(HTTP_PROCESSOR, NettyAsyncHttpProvider.this);
+
+                if (providerConfig.getHttpsAdditionalPipelineInitializer() != null) {
+                    providerConfig.getHttpsAdditionalPipelineInitializer().initPipeline(pipeline);
+                }
+
                 return pipeline;
             }
         });
@@ -412,6 +424,10 @@ public class NettyAsyncHttpProvider extends SimpleChannelUpstreamHandler impleme
 
                 pipeline.addLast(HTTP_HANDLER, createHttpsClientCodec());
                 pipeline.addLast(WS_PROCESSOR, NettyAsyncHttpProvider.this);
+
+                if (providerConfig.getWssAdditionalPipelineInitializer() != null) {
+                    providerConfig.getWssAdditionalPipelineInitializer().initPipeline(pipeline);
+                }
 
                 return pipeline;
             }
